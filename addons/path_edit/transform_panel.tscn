@@ -23,7 +23,7 @@ OptionButton/styles/normal = SubResource( 3 )
 
 [sub_resource type="StyleBoxFlat" id=4]
 content_margin_left = 10.0
-content_margin_right = 4.0
+content_margin_right = 10.0
 content_margin_top = 7.0
 content_margin_bottom = 7.0
 bg_color = Color( 0.0980392, 0.113725, 0.156863, 1 )
@@ -73,9 +73,10 @@ margin_top = 50.0
 margin_right = 1024.0
 margin_bottom = 78.0
 theme = SubResource( 5 )
+custom_constants/separation = 0
 
 [node name="x" type="Label" parent="HBoxContainer"]
-margin_right = 21.0
+margin_right = 27.0
 margin_bottom = 28.0
 text = "x"
 __meta__ = {
@@ -83,32 +84,32 @@ __meta__ = {
 }
 
 [node name="x_edit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 25.0
-margin_right = 337.0
+margin_left = 27.0
+margin_right = 341.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 
 [node name="y" type="Label" parent="HBoxContainer"]
 margin_left = 341.0
-margin_right = 362.0
+margin_right = 368.0
 margin_bottom = 28.0
 text = "y"
 
 [node name="y_edit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 366.0
-margin_right = 678.0
+margin_left = 368.0
+margin_right = 682.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 
 [node name="z" type="Label" parent="HBoxContainer"]
 margin_left = 682.0
-margin_right = 703.0
+margin_right = 709.0
 margin_bottom = 28.0
 text = "z"
 
 [node name="z_edit" type="LineEdit" parent="HBoxContainer"]
-margin_left = 707.0
-margin_right = 1020.0
+margin_left = 709.0
+margin_right = 1024.0
 margin_bottom = 28.0
 size_flags_horizontal = 3
 
