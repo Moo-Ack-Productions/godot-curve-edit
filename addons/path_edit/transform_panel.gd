@@ -14,9 +14,12 @@ onready var edit_y:LineEdit = get_node("HBoxContainer/y_edit")
 onready var edit_z:LineEdit = get_node("HBoxContainer/z_edit")
 
 var current_path:Path
+var backup_curve:Curve3D
+var backup_path:WeakRef
 
 var _internal_update := false
 var _curve_cache = [] # Used to detect which point recently modified.
+
 
 func _ready():
 	point_part.clear()
@@ -34,7 +37,7 @@ func _input(event):
 	if focus == edit_x or focus == edit_y or focus == edit_z:
 		_on_edit_focus_exited()
 		print("Pressed enter")
-			
+
 
 # Update the dropdown for points and current values of line edits,
 # for when the curve is modified externally.
@@ -47,12 +50,14 @@ func update_current_transform(object):
 		return
 	if not current_path.curve:
 		return
-	
+
 	var num_points = current_path.curve.get_point_count()
-	
+
 	point_index.clear()
 	for i in range(num_points):
 		point_index.add_item("Point %s" % i)
+
+	# Update UI box, which will also create/update the backup_curve.
 	_on_edit_focus_exited()
 
 
@@ -62,7 +67,7 @@ func update_path_point():
 		float(edit_x.text),
 		float(edit_y.text),
 		float(edit_z.text)))
-	
+
 	var index = point_index.selected
 	if point_part.selected == POS:
 		current_path.curve.set_point_position(int(index), loc)
@@ -71,12 +76,16 @@ func update_path_point():
 	elif point_part.selected == OUT:
 		current_path.curve.set_point_out(int(index), loc)
 
+	# Save a copy of the current curve so we can later detect any handle changes.
+	backup_curve = current_path.curve.duplicate()
+	backup_path = weakref(current_path)
+
 
 # Called by all x, y, and z line edits after focus left or enter pressed.
 func _on_edit_focus_exited():
 	if _internal_update:
 		return
-	
+
 	_internal_update = true
 	_enforce_numeric_values(edit_x.text, edit_x)
 	_enforce_numeric_values(edit_y.text, edit_y)
@@ -96,12 +105,35 @@ func _enforce_numeric_values(new_text:String, line_edit:LineEdit):
 	line_edit.caret_position = init_cursor_pos
 
 
-# When the option dropdown is modified.
+# When the option dropdown is modified. No actual curve changes to apply.
 func _on_point_selector_item_selected(_index=0):
 	if not current_path:
 		return
 	if not current_path.curve:
 		return
+	var num_points = current_path.curve.get_point_count()
+
+	# Check the backed up curve against the current curve.
+	if (
+		backup_path != null
+		and current_path == backup_path.get_ref()
+		and backup_curve.get_point_count() == num_points
+	):
+		var something_changed = false
+		for pt in range(num_points):
+			if backup_curve.get_point_position(pt) != current_path.curve.get_point_position(pt):
+				point_part.selected = POS
+				point_index.selected = pt
+				break
+			if backup_curve.get_point_in(pt) != current_path.curve.get_point_in(pt):
+				point_part.selected = IN
+				point_index.selected = pt
+				break
+			if backup_curve.get_point_out(pt) != current_path.curve.get_point_out(pt):
+				point_part.selected = OUT
+				point_index.selected = pt
+				break
+
 	var pt
 	if point_part.selected == POS:
 		pt = current_path.curve.get_point_position(point_index.selected)
@@ -115,3 +147,7 @@ func _on_point_selector_item_selected(_index=0):
 	_enforce_numeric_values(str(pt.y), edit_y)
 	_enforce_numeric_values(str(pt.z), edit_z)
 	_internal_update = false
+
+	# Update the back, since the transform active selection already changed.
+	backup_curve = current_path.curve.duplicate()
+	backup_path = weakref(current_path)
