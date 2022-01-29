@@ -126,6 +126,9 @@ rect_min_size = Vector2( 0, 15 )
 
 [connection signal="item_selected" from="HBoxContainer2/point_selector" to="." method="_on_point_selector_item_selected"]
 [connection signal="item_selected" from="HBoxContainer2/point_part" to="." method="_on_point_selector_item_selected"]
+[connection signal="focus_entered" from="HBoxContainer/x_edit" to="." method="_on_x_edit_focus_entered"]
 [connection signal="focus_exited" from="HBoxContainer/x_edit" to="." method="_on_edit_focus_exited"]
+[connection signal="focus_entered" from="HBoxContainer/y_edit" to="." method="_on_y_edit_focus_entered"]
 [connection signal="focus_exited" from="HBoxContainer/y_edit" to="." method="_on_edit_focus_exited"]
+[connection signal="focus_entered" from="HBoxContainer/z_edit" to="." method="_on_z_edit_focus_entered"]
 [connection signal="focus_exited" from="HBoxContainer/z_edit" to="." method="_on_edit_focus_exited"]

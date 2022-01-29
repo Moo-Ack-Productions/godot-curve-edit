@@ -70,11 +70,11 @@ func update_path_point():
 
 	var index = point_index.selected
 	if point_part.selected == POS:
-		current_path.curve.set_point_position(int(index), loc)
+		current_path.curve.set_point_position(index, loc)
 	elif point_part.selected == IN:
-		current_path.curve.set_point_in(int(index), loc)
+		current_path.curve.set_point_in(index, loc)
 	elif point_part.selected == OUT:
-		current_path.curve.set_point_out(int(index), loc)
+		current_path.curve.set_point_out(index, loc)
 
 	# Save a copy of the current curve so we can later detect any handle changes.
 	backup_curve = current_path.curve.duplicate()
@@ -151,3 +151,15 @@ func _on_point_selector_item_selected(_index=0):
 	# Update the back, since the transform active selection already changed.
 	backup_curve = current_path.curve.duplicate()
 	backup_path = weakref(current_path)
+
+
+func _on_x_edit_focus_entered():
+	edit_x.select_all()
+
+
+func _on_y_edit_focus_entered():
+	edit_y.select_all()
+
+
+func _on_z_edit_focus_entered():
+	edit_z.select_all()
