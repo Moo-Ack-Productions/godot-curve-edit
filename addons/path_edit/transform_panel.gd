@@ -63,10 +63,10 @@ func update_current_transform(object):
 
 # Propogate an edit from the panel over to the curve itself.
 func update_path_point():
-	var loc = current_path.to_local(Vector3(
+	var loc = Vector3(
 		float(edit_x.text),
 		float(edit_y.text),
-		float(edit_z.text)))
+		float(edit_z.text))
 
 	var index = point_index.selected
 	if point_part.selected == POS:
@@ -163,3 +163,18 @@ func _on_y_edit_focus_entered():
 
 func _on_z_edit_focus_entered():
 	edit_z.select_all()
+
+
+func _on_x_edit_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		edit_x.select_all()
+
+
+func _on_y_edit_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		edit_y.select_all()
+
+
+func _on_z_edit_gui_input(event):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		edit_z.select_all()
