@@ -6,7 +6,7 @@ var plugin
 
 
 func _enter_tree():
-	plugin = preload("res://addons/path_edit/path_edit.gd").new()
+	plugin = preload("res://addons/curve_edit/path_edit.gd").new()
 	add_inspector_plugin(plugin)
 
 

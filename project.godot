@@ -15,7 +15,7 @@ config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/path_edit/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/curve_edit/plugin.cfg" )
 
 [gui]
 
