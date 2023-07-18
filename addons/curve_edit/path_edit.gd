@@ -1,4 +1,4 @@
-extends EditorInspectorPlugin 
+extends EditorInspectorPlugin
 
 const TransformPanel = preload("res://addons/curve_edit/transform_panel.tscn")
 var panel_instance

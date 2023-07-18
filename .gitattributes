@@ -1,0 +1,16 @@
+
+# Export ignores, so that these files are ignored when someone installs the
+# plugin from the Godot Asset Library. You can test the changes by
+# running: `git archive`
+/.gitattributes              export-ignore
+/.gitignore                  export-ignore
+/demo_scene.tscn             export-ignore
+/default_env.tres            export-ignore
+/demo/                       export-ignore
+/icon.png                    export-ignore
+/icon.png.import             export-ignore
+/LICENSE                     export-ignore
+/project.godot               export-ignore
+/README.md                   export-ignore
+/release.sh                  export-ignore
+/images/                     export-ignore
