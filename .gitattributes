@@ -13,5 +13,4 @@
 /project.godot               export-ignore
 /README.md                   export-ignore
 /release.sh                  export-ignore
-/*.png
-/*.gif
+/images/                     export-ignore

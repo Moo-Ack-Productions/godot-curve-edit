@@ -19,11 +19,11 @@ Copy the `addons/curve_edit` folder into your own project addons folder. Then en
 ## UI added and demo
 
 This is the following panel:
-![UI screenshot](/ui_visual.png?raw=true)
+![UI screenshot](/images/ui_visual.png?raw=true)
 
 You can see what it looks like working with this panel. After the curve has been manipulated in the 3D view, the most recently modified point automatically becomes active (and set to position, in, or out accordingly). This makes it easy to jump to the correct point, but you can also select the point to modify from the dropdown.
 
-![UI demo](/ui_demo.gif?raw=true)
+![UI demo](/images/ui_demo.gif?raw=true)
 
 ## Known issues
 
