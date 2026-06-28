@@ -6,7 +6,7 @@ var panel_instance
 
 func _can_handle(object) -> bool:
 	# Only paths are supported.
-	return object is Path3D or object is Path2D
+	return object is Path3D  # TODO: or object is Path2D
 
 
 ## Add the custom draw under the object-level transform panel.
