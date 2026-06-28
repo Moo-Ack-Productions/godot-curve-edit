@@ -1,8 +1,8 @@
-tool
+@tool
 extends EditorPlugin
 
 
-var plugin
+var plugin : EditorInspectorPlugin
 
 
 func _enter_tree():
@@ -11,7 +11,8 @@ func _enter_tree():
 
 
 func _exit_tree():
-	remove_inspector_plugin(plugin)
+	if plugin != null:
+		remove_inspector_plugin(plugin)
 
 
 func refresh() -> void:
