@@ -51,11 +51,7 @@ func update_current_transform(object):
 	if not current_path.curve:
 		return
 
-	var num_points = current_path.curve.get_point_count()
-
-	point_index.clear()
-	for i in range(num_points):
-		point_index.add_item("Point %s" % i)
+	populate_point_index_ui()
 
 	# Update UI box, which will also create/update the backup_curve.
 	_on_edit_focus_exited()
@@ -115,6 +111,9 @@ func _enforce_numeric_values(new_text:String, line_edit:LineEdit):
 
 # When the option dropdown is modified. No actual curve changes to apply.
 func _on_point_selector_item_selected(_index=0):
+
+	populate_point_index_ui()
+
 	if not current_path:
 		return
 	if not current_path.curve:
@@ -160,6 +159,12 @@ func _on_point_selector_item_selected(_index=0):
 	backup_curve = current_path.curve.duplicate()
 	backup_path = weakref(current_path)
 
+
+func populate_point_index_ui():
+	var num_points := current_path.curve.get_point_count()
+	point_index.clear()
+	for i in range(num_points):
+		point_index.add_item("Point %s" % i)
 
 func _on_x_edit_focus_entered():
 	edit_x.select_all()
