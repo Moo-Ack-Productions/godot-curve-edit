@@ -33,7 +33,6 @@ func _input(event):
 		return
 	if not event.keycode == KEY_ENTER:
 		return
-	#var focus = get_focus_owner()
 	var focus = get_viewport().gui_get_focus_owner()
 	if focus == edit_x or focus == edit_y or focus == edit_z:
 		_on_edit_focus_exited()
