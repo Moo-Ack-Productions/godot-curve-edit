@@ -1,3 +1,7 @@
+
+> [!NOTE]  
+> As of June 2026: Support for Godot 4 is officially in progress, currently in a partially working state but without undo/redo and relatd odd artifacts.
+
 # Curve Edit Panel
 
 This addon adds input controls to the Inspector > Transform panel for 3D paths. This allows for precise changes to curve points.
