@@ -2,6 +2,8 @@
 @tool
 extends VBoxContainer
 
+var path_edit : EditorInspectorPlugin
+
 # Index aliases
 const POS = 0;
 const IN = 1;
@@ -18,8 +20,6 @@ var backup_curve:Curve3D
 var backup_path:WeakRef
 
 var _internal_update := false
-var _curve_cache = [] # Used to detect which point recently modified.
-
 
 func _ready():
 	point_part.clear()
@@ -41,17 +41,24 @@ func _input(event):
 
 # Update the dropdown for points and current values of line edits,
 # for when the curve is modified externally.
-func update_current_transform(object):
+func update_current_transform(object, _path_edit):
+	# Unsubscribe from previously selected path
 	if current_path and current_path != object:
 		current_path.disconnect("curve_changed", _on_point_selector_item_selected)
+	
+	# Cache a reference to the path_edit script so we can use variables from there later
+	path_edit = _path_edit
 	current_path = object
+
 	current_path.connect("curve_changed", _on_point_selector_item_selected)
+
 	if not current_path:
 		return
 	if not current_path.curve:
 		return
 
 	populate_point_index_ui()
+	populate_point_part_ui()
 
 	# Update UI box, which will also create/update the backup_curve.
 	_on_edit_focus_exited()
@@ -60,19 +67,31 @@ func update_current_transform(object):
 # Propogate an edit from the panel over to the curve itself.
 # Round the float to only have 2 decimal points 
 func update_path_point():
-	var loc = Vector3(
-		snapped(float(edit_x.text), 0.01),
-		snapped(float(edit_y.text), 0.01),
-		snapped(float(edit_z.text), 0.01)
-	)
 
-	var index = point_index.selected
-	if point_part.selected == POS:
-		current_path.curve.set_point_position(index, loc)
-	elif point_part.selected == IN:
-		current_path.curve.set_point_in(index, loc)
-	elif point_part.selected == OUT:
-		current_path.curve.set_point_out(index, loc)
+	var has_point : bool = path_edit.point_index != -1
+
+	var index := 0
+
+	# Only continue if there is a previously selected point
+	if has_point:
+		index = path_edit.point_index
+		point_index.selected = index
+		point_part.selected = path_edit.point_part
+
+	var loc := Vector3(float(edit_x.text), float(edit_y.text), float(edit_z.text))
+
+	# Only update the path's curve if the text inputs aren't set to the default, which is Vector3.ZERO
+	if loc != Vector3.ZERO: 
+		if path_edit.point_part == POS:
+			current_path.curve.set_point_position(index, loc)
+		elif path_edit.point_part == IN:
+			current_path.curve.set_point_in(index, loc)
+		elif path_edit.point_part == OUT:
+			current_path.curve.set_point_out(index, loc)
+
+		edit_x.text = str(snapped(loc.x, 0.001))
+		edit_y.text = str(snapped(loc.y, 0.001))
+		edit_z.text = str(snapped(loc.z, 0.001))
 
 	# Save a copy of the current curve so we can later detect any handle changes.
 	backup_curve = current_path.curve.duplicate()
@@ -100,8 +119,8 @@ func _enforce_numeric_values(new_text:String, line_edit:LineEdit):
 	for valid_character in regex.search_all(str(new_text)):
 		compiled += valid_character.get_string()
 	
-	# Round the float to only have 2 decimal points 
-	var point_pos : float = snapped(float(compiled), 0.01)
+	# Round the float to only have 3 decimal points 
+	var point_pos : float = snapped(float(compiled), 0.001)
 	
 	compiled = str(point_pos)
 	
@@ -110,14 +129,18 @@ func _enforce_numeric_values(new_text:String, line_edit:LineEdit):
 
 
 # When the option dropdown is modified. No actual curve changes to apply.
-func _on_point_selector_item_selected(_index=0):
+func _on_point_selector_item_selected(_index=-1):
+	var has_option : bool = _index != -1
+
+	if has_option:
+		path_edit.point_part = _index
 
 	populate_point_index_ui()
+	populate_point_part_ui()
 
-	if not current_path:
+	if not current_path or not current_path.curve:
 		return
-	if not current_path.curve:
-		return
+
 	var num_points = current_path.curve.get_point_count()
 
 	# Check the backed up curve against the current curve.
@@ -131,14 +154,20 @@ func _on_point_selector_item_selected(_index=0):
 			if backup_curve.get_point_position(pt) != current_path.curve.get_point_position(pt):
 				point_part.selected = POS
 				point_index.selected = pt
+				path_edit.point_index = pt
+				path_edit.point_part = POS
 				break
 			if backup_curve.get_point_in(pt) != current_path.curve.get_point_in(pt):
 				point_part.selected = IN
 				point_index.selected = pt
+				path_edit.point_index = pt
+				path_edit.point_part = IN
 				break
 			if backup_curve.get_point_out(pt) != current_path.curve.get_point_out(pt):
 				point_part.selected = OUT
 				point_index.selected = pt
+				path_edit.point_index = pt
+				path_edit.point_part = OUT
 				break
 
 	var pt
@@ -165,6 +194,22 @@ func populate_point_index_ui():
 	point_index.clear()
 	for i in range(num_points):
 		point_index.add_item("Point %s" % i)
+
+
+func populate_point_part_ui():
+	var index : int = path_edit.point_index
+	var loc : Vector3
+	if path_edit.point_part == POS:
+		loc = current_path.curve.get_point_position(index)
+	elif path_edit.point_part == IN:
+		loc = current_path.curve.get_point_in(index)
+	elif path_edit.point_part == OUT:
+		loc = current_path.curve.get_point_out(index)
+		
+	edit_x.text = str(snapped(loc.x, 0.001))
+	edit_y.text = str(snapped(loc.y, 0.001))
+	edit_z.text = str(snapped(loc.z, 0.001))
+
 
 func _on_x_edit_focus_entered():
 	edit_x.select_all()
