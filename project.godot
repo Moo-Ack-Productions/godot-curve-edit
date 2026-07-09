@@ -6,16 +6,17 @@
 ;   [section] ; section goes between []
 ;   param=value ; assign values to parameters
 
-config_version=4
+config_version=5
 
 [application]
 
 config/name="Curve Control"
+config/features=PackedStringArray("4.4")
 config/icon="res://icon.png"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/curve_edit/plugin.cfg" )
+enabled=PackedStringArray("res://addons/curve_edit/plugin.cfg")
 
 [gui]
 
@@ -27,4 +28,4 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+environment/defaults/default_environment="res://default_env.tres"
