@@ -2,6 +2,8 @@
 @tool
 extends VBoxContainer
 
+signal point_value_changed(path: Path3D, index: int, part: int, new_value: Vector3)
+
 # Index aliases
 const POS = 0;
 const IN = 1;
@@ -60,19 +62,17 @@ func update_current_transform(object):
 # Propogate an edit from the panel over to the curve itself.
 # Round the float to only have 2 decimal points 
 func update_path_point():
+	if not current_path or not  current_path.curve:
+		return
 	var loc = Vector3(
 		snapped(float(edit_x.text), 0.01),
 		snapped(float(edit_y.text), 0.01),
 		snapped(float(edit_z.text), 0.01)
 	)
-
 	var index = point_index.selected
-	if point_part.selected == POS:
-		current_path.curve.set_point_position(index, loc)
-	elif point_part.selected == IN:
-		current_path.curve.set_point_in(index, loc)
-	elif point_part.selected == OUT:
-		current_path.curve.set_point_out(index, loc)
+	var part = point_part.selected
+	
+	point_value_changed.emit(current_path, index, part, loc)
 
 	# Save a copy of the current curve so we can later detect any handle changes.
 	backup_curve = current_path.curve.duplicate()
@@ -161,10 +161,17 @@ func _on_point_selector_item_selected(_index=0):
 
 
 func populate_point_index_ui():
+	var previously_selected = point_index.selected
 	var num_points := current_path.curve.get_point_count()
 	point_index.clear()
 	for i in range(num_points):
 		point_index.add_item("Point %s" % i)
+
+	if previously_selected >= 0 and previously_selected < num_points:
+		point_index.selected = previously_selected
+	elif num_points > 0:
+		point_index.selected = 0
+
 
 func _on_x_edit_focus_entered():
 	edit_x.select_all()
